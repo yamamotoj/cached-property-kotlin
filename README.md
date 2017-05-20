@@ -1,6 +1,7 @@
 # Kotlin Cached Property 
 Lazy cache using Kotlin delegated property.
 
+
 ```kotlin
 class SomeClass {
     private val cache = CachedProperty(Random()::nextInt)
@@ -15,6 +16,19 @@ class SomeClass {
 
 Download
 ---
+[![](https://jitpack.io/v/yamamotoj/cached-property-kotlin.svg)](https://jitpack.io/#yamamotoj/cached-property-kotlin)
+
+```gradle
+repositories {
+  maven { url "https://jitpack.io" }
+}
+```
+
+```gradle
+dependencies {
+  compile 'com.github.yamamotoj:cached-property-kotlin:0.1.0'
+}
+```
 
 
 
