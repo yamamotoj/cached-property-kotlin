@@ -4,12 +4,13 @@ Lazy cache using Kotlin delegated property.
 
 ```kotlin
 class SomeClass {
-    private val cache = CachedProperty(Random()::nextInt)
-    val data by cache
 
-    // remove cached value and value is loaded 
-    // when the data is called on next time
-    fun revoke() = cache.invalidate()
+    private val cacheDelegate = cache { Random(10).nextInt() }
+    val myData by cacheDelegate
+
+    // Clears cached value and makes the `cache`
+    // initializer block run again on next `myData` request
+    fun revoke() = cacheDelegate.invalidate()
 }
 ```
 
