@@ -10,7 +10,7 @@ android {
         applicationId "com.github.yamamotoj.cachedproperty"
         minSdkVersion 15
         targetSdkVersion 30
-        versionCode Integer.parseInt(artifactVersionCode)
+        versionCode 2
         versionName artifactVersion
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
