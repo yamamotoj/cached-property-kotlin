@@ -18,7 +18,6 @@ class CachedProperty<out T>(val loader: () -> T) : ReadOnlyProperty<Any, T> {
         cachedValue = CachedValue.Invalid
     }
 
-    @Suppress("unused")
     private sealed class CachedValue<out T> {
         object Invalid : CachedValue<Nothing>()
         class Value<out T>(val value: T) : CachedValue<T>()
