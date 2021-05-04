@@ -53,4 +53,4 @@ limitations under the License.
 Contributors
 ---
 
-[Enrico Siboni](https://github.com/siboxd)
+- [Enrico Siboni](https://github.com/siboxd)
