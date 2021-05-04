@@ -4,10 +4,9 @@ import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
 /**
- * Defines a read only cached property delegate
+ * Creates a property delegate that caches the value returned by [initializer] until [CachedProperty.invalidate] is called
  *
- * This property delegate works as the kotlin `lazy { }` property delegate,
- * but it can also be invalidated, triggering a new computation of the [initializer] function
+ * @see cache
  */
 class CachedProperty<out T>(val initializer: () -> T) : ReadOnlyProperty<Any?, T>, Invalidatable {
     private var cachedValue: CachedValue<T> = CachedValue.Invalid
@@ -28,3 +27,27 @@ class CachedProperty<out T>(val initializer: () -> T) : ReadOnlyProperty<Any?, T
         class Value<out T>(val value: T) : CachedValue<T>()
     }
 }
+
+/**
+ * Creates a property delegate that caches the value returned by [initializer] until [CachedProperty.invalidate] is called
+ *
+ * The created property delegate is similar to kotlin `lazy { }` property delegate.
+ * The [initializer] is called once first value request is made.
+ * After this moment that's the value returned on subsequent getter calls.
+ *
+ * The main difference from `lazy { }` comes when the [CachedProperty.invalidate] method is called on this delegate object.
+ * It will clear the cache and the [initializer] will be called again on next getter request.
+ *
+ * Example usage:
+ *
+ *      class SomeClass {
+ *
+ *          private val cacheDelegate = cache { Random(10).nextInt() }
+ *          val myData by cacheDelegate
+ *
+ *          // Clears cached value and makes the `cache`
+ *          // initializer block run again on next `myData` request
+ *          fun revoke() = cacheDelegate.invalidate()
+ *      }
+ */
+fun <T> cache(initializer: () -> T): CachedProperty<T> = CachedProperty(initializer)
