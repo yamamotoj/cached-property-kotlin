@@ -1,11 +1,23 @@
-plugins{
+plugins {
     id 'java'
     id 'kotlin'
     id 'maven'
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
 }
 
-group = 'com.github.Yamamotoj'
+// Publishing //
+
+task androidSourcesJar(type: Jar) {
+    archiveBaseName.set(repositoryProjectName)
+    archiveClassifier.set('sources')
+    from sourceSets.main.java.srcDirs
+}
+
+artifacts {
+    archives androidSourcesJar
+}
+
+group = mavenGroupId

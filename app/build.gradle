@@ -10,8 +10,8 @@ android {
         applicationId "com.github.yamamotoj.cachedproperty"
         minSdkVersion 15
         targetSdkVersion 30
-        versionCode 2
-        versionName "2.0"
+        versionCode Integer.parseInt(artifactVersionCode)
+        versionName artifactVersion
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
     buildTypes {
@@ -21,7 +21,11 @@ android {
         }
     }
     sourceSets {
-        main.java.srcDirs += 'src/main/kotlin'
+        main.java.srcDirs += [
+                'src/main/kotlin',
+                'src/test/kotlin',
+                'src/androidTest/kotlin'
+        ]
     }
 }
 
