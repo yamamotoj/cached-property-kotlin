@@ -54,11 +54,18 @@ class CachedProperty<out T>(val initializer: () -> T) : ReadOnlyProperty<Any?, T
 fun <T> cache(initializer: () -> T): CachedProperty<T> = CachedProperty(initializer)
 
 /**
- * Invalidates this property delegate, if it is a [CachedProperty]; does nothing otherwise.
+ * Invalidates this property *delegate*, if it's a [CachedProperty]; does nothing otherwise.
  *
  * This method has effect only if the provided property is delegated with [CachedProperty] instance.
  *
  * @see cache
  */
-fun KProperty0<*>.invalidateCache() =
+fun KProperty0<*>.invalidateCache() {
     (getDelegate() as? CachedProperty<*>)?.also { it.invalidate() }
+}
+
+/** Calls [invalidateCache] on each property */
+fun Iterable<KProperty0<*>>.invalidateAllCaches() = forEach { it.invalidateCache() }
+
+/** Calls [invalidateCache] on each property */
+fun Sequence<KProperty0<*>>.invalidateAllCaches() = forEach { it.invalidateCache() }
