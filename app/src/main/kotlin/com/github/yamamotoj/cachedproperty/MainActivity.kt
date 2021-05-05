@@ -6,11 +6,9 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
-    private val intValueCacheDelegate = cache { Random().nextInt() }
-    val intValue by intValueCacheDelegate
+    private val intValue by cached { Random().nextInt() }
 
-    private val booleanValueCacheDelegate = CachedProperty { Random().nextBoolean() }
-    val booleanValue by booleanValueCacheDelegate
+    private val booleanValue by CachedProperty { Random().nextBoolean() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -18,9 +16,9 @@ class MainActivity : AppCompatActivity() {
 
 
         // After this call, subsequent access to intValue will trigger the initializer computation
-        intValueCacheDelegate.invalidate()
+        ::intValue.invalidateCache()
 
         // After this call, subsequent access to booleanValue will trigger the initializer computation
-        booleanValueCacheDelegate.invalidate()
+        ::booleanValue.invalidateCache()
     }
 }

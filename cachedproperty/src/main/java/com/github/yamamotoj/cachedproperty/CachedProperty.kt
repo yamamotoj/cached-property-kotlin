@@ -2,20 +2,21 @@ package com.github.yamamotoj.cachedproperty
 
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
+import kotlin.reflect.KProperty0
 
 /**
  * Creates a property delegate that caches the value returned by [initializer] until [CachedProperty.invalidate] is called
  *
- * @see cache
+ * @see cached
  */
 class CachedProperty<out T>(val initializer: () -> T) : ReadOnlyProperty<Any?, T>, Invalidatable {
     private var cachedValue: CachedValue<T> = CachedValue.Invalid
 
     override fun getValue(thisRef: Any?, property: KProperty<*>): T =
-            when (val currentCachedValue = cachedValue) {
-                CachedValue.Invalid -> initializer().also { cachedValue = CachedValue.Value(it) }
-                is CachedValue.Value<T> -> currentCachedValue.value
-            }
+        when (val currentCachedValue = cachedValue) {
+            CachedValue.Invalid -> initializer().also { cachedValue = CachedValue.Value(it) }
+            is CachedValue.Value<T> -> currentCachedValue.value
+        }
 
     override fun invalidate() {
         cachedValue = CachedValue.Invalid
@@ -38,16 +39,34 @@ class CachedProperty<out T>(val initializer: () -> T) : ReadOnlyProperty<Any?, T
  * The main difference from `lazy { }` comes when the [CachedProperty.invalidate] method is called on this delegate object.
  * It will clear the cache and the [initializer] will be called again on next getter request.
  *
+ * To access the delegate after its assignment use the `::property` syntax.
+ *
  * Example usage:
  *
  *      class SomeClass {
  *
- *          private val cacheDelegate = cache { Random(10).nextInt() }
- *          val myData by cacheDelegate
+ *          val myData by cache { Random(10).nextInt() }
  *
  *          // Clears cached value and makes the `cache`
  *          // initializer block run again on next `myData` request
- *          fun revoke() = cacheDelegate.invalidate()
+ *          fun revoke() = ::myData.invalidateCache()
  *      }
  */
-fun <T> cache(initializer: () -> T): CachedProperty<T> = CachedProperty(initializer)
+fun <T> cached(initializer: () -> T): CachedProperty<T> = CachedProperty(initializer)
+
+/**
+ * Invalidates this property *delegate*, if it's a [CachedProperty]; does nothing otherwise.
+ *
+ * This method has effect only if the provided property is delegated with [CachedProperty] instance.
+ *
+ * @see cached
+ */
+fun KProperty0<*>.invalidateCache() {
+    (getDelegate() as? CachedProperty<*>)?.also { it.invalidate() }
+}
+
+/** Calls [invalidateCache] on each property */
+fun Iterable<KProperty0<*>>.invalidateAllCaches() = forEach { it.invalidateCache() }
+
+/** Calls [invalidateCache] on each property */
+fun Sequence<KProperty0<*>>.invalidateAllCaches() = forEach { it.invalidateCache() }
