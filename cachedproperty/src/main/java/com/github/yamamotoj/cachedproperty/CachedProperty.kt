@@ -7,7 +7,7 @@ import kotlin.reflect.KProperty0
 /**
  * Creates a property delegate that caches the value returned by [initializer] until [CachedProperty.invalidate] is called
  *
- * @see cache
+ * @see cached
  */
 class CachedProperty<out T>(val initializer: () -> T) : ReadOnlyProperty<Any?, T>, Invalidatable {
     private var cachedValue: CachedValue<T> = CachedValue.Invalid
@@ -51,14 +51,14 @@ class CachedProperty<out T>(val initializer: () -> T) : ReadOnlyProperty<Any?, T
  *          fun revoke() = cacheDelegate.invalidate()
  *      }
  */
-fun <T> cache(initializer: () -> T): CachedProperty<T> = CachedProperty(initializer)
+fun <T> cached(initializer: () -> T): CachedProperty<T> = CachedProperty(initializer)
 
 /**
  * Invalidates this property *delegate*, if it's a [CachedProperty]; does nothing otherwise.
  *
  * This method has effect only if the provided property is delegated with [CachedProperty] instance.
  *
- * @see cache
+ * @see cached
  */
 fun KProperty0<*>.invalidateCache() {
     (getDelegate() as? CachedProperty<*>)?.also { it.invalidate() }

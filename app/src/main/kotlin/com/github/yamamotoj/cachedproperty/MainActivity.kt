@@ -6,7 +6,7 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
-    private val intValueCacheDelegate = cache { Random().nextInt() }
+    private val intValueCacheDelegate = cached { Random().nextInt() }
     val intValue by intValueCacheDelegate
 
     private val booleanValueCacheDelegate = CachedProperty { Random().nextBoolean() }
