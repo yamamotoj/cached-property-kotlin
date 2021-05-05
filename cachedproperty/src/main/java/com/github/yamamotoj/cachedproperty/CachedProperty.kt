@@ -3,6 +3,7 @@ package com.github.yamamotoj.cachedproperty
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 import kotlin.reflect.KProperty0
+import kotlin.reflect.jvm.isAccessible
 
 /**
  * Creates a property delegate that caches the value returned by [initializer] until [CachedProperty.invalidate] is called
@@ -64,7 +65,9 @@ fun <T> cached(initializer: () -> T): CachedProperty<T> = CachedProperty(initial
  * @see cached
  */
 fun KProperty0<*>.invalidateCache() {
+    isAccessible = true
     (getDelegate() as? CachedProperty<*>)?.also { it.invalidate() }
+    isAccessible = false
 }
 
 /** Calls [invalidateCache] on each property */
