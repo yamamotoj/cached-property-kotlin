@@ -39,16 +39,17 @@ class CachedProperty<out T>(val initializer: () -> T) : ReadOnlyProperty<Any?, T
  * The main difference from `lazy { }` comes when the [CachedProperty.invalidate] method is called on this delegate object.
  * It will clear the cache and the [initializer] will be called again on next getter request.
  *
+ * To access the delegate after its assignment use the `::property` syntax.
+ *
  * Example usage:
  *
  *      class SomeClass {
  *
- *          private val cacheDelegate = cache { Random(10).nextInt() }
- *          val myData by cacheDelegate
+ *          val myData by cache { Random(10).nextInt() }
  *
  *          // Clears cached value and makes the `cache`
  *          // initializer block run again on next `myData` request
- *          fun revoke() = cacheDelegate.invalidate()
+ *          fun revoke() = ::myData.invalidateCache()
  *      }
  */
 fun <T> cached(initializer: () -> T): CachedProperty<T> = CachedProperty(initializer)
