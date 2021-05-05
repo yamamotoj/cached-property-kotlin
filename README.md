@@ -5,9 +5,9 @@ Lazy cache using Kotlin delegated property.
 ```kotlin
 class SomeClass {
 
-    val myData by cache { Random(10).nextInt() }
+    val myData by cached { Random(10).nextInt() }
 
-    // Clears cached value and makes the `cache`
+    // Clears cached value and makes the `cached`
     // initializer block run again on next `myData` request
     fun revoke() = ::myData.invalidateCache()
 }
