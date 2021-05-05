@@ -55,9 +55,11 @@ class CachedProperty<out T>(val initializer: () -> T) : ReadOnlyProperty<Any?, T
 fun <T> cached(initializer: () -> T): CachedProperty<T> = CachedProperty(initializer)
 
 /**
- * Invalidates this property *delegate*, if it's a [CachedProperty]; does nothing otherwise.
+ * Invalidates this property *delegate* cache, scheduling a new computation on next access.
  *
  * This method has effect only if the provided property is delegated with [CachedProperty] instance.
+ *
+ *      val myData by cached { println("Computed") }
  *
  * @see cached
  */
