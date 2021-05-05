@@ -2,6 +2,7 @@ package com.github.yamamotoj.cachedproperty
 
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
+import kotlin.reflect.KProperty0
 
 /**
  * Creates a property delegate that caches the value returned by [initializer] until [CachedProperty.invalidate] is called
@@ -12,10 +13,10 @@ class CachedProperty<out T>(val initializer: () -> T) : ReadOnlyProperty<Any?, T
     private var cachedValue: CachedValue<T> = CachedValue.Invalid
 
     override fun getValue(thisRef: Any?, property: KProperty<*>): T =
-            when (val currentCachedValue = cachedValue) {
-                CachedValue.Invalid -> initializer().also { cachedValue = CachedValue.Value(it) }
-                is CachedValue.Value<T> -> currentCachedValue.value
-            }
+        when (val currentCachedValue = cachedValue) {
+            CachedValue.Invalid -> initializer().also { cachedValue = CachedValue.Value(it) }
+            is CachedValue.Value<T> -> currentCachedValue.value
+        }
 
     override fun invalidate() {
         cachedValue = CachedValue.Invalid
@@ -51,3 +52,13 @@ class CachedProperty<out T>(val initializer: () -> T) : ReadOnlyProperty<Any?, T
  *      }
  */
 fun <T> cache(initializer: () -> T): CachedProperty<T> = CachedProperty(initializer)
+
+/**
+ * Invalidates this property delegate, if it is a [CachedProperty]; does nothing otherwise.
+ *
+ * This method has effect only if the provided property is delegated with [CachedProperty] instance.
+ *
+ * @see cache
+ */
+fun KProperty0<*>.invalidateCache() =
+    (getDelegate() as? CachedProperty<*>)?.also { it.invalidate() }
