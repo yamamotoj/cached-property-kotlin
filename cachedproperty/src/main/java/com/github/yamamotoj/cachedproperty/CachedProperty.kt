@@ -14,7 +14,7 @@ class CachedProperty<out T>(val initializer: () -> T) : ReadOnlyProperty<Any?, T
     private var cachedValue: CachedValue<T> = CachedValue.Invalid
 
     /** Returns `true` when the cached value is still valid, `false` otherwise */
-    internal val isInvalid get() = cachedValue is CachedValue.Invalid
+    internal val isValid get() = cachedValue !is CachedValue.Invalid
 
     override fun getValue(thisRef: Any?, property: KProperty<*>): T =
         when (val currentCachedValue = cachedValue) {
@@ -69,7 +69,7 @@ fun <T> cached(initializer: () -> T): CachedProperty<T> = CachedProperty(initial
  */
 fun KProperty0<*>.invalidateCache() {
     (getDelegate() as? CachedProperty<*>)?.also {
-        if (it.isInvalid) {
+        if (it.isValid) {
             isAccessible = true
             it.invalidate()
             isAccessible = false
