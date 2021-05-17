@@ -13,9 +13,6 @@ import kotlin.reflect.jvm.isAccessible
 class CachedProperty<out T>(val initializer: () -> T) : ReadOnlyProperty<Any?, T>, Invalidatable {
     private var cachedValue: CachedValue<T> = CachedValue.Invalid
 
-    /** Returns `true` when the cached value is still valid, `false` otherwise */
-    internal val isValid get() = cachedValue !is CachedValue.Invalid
-
     override fun getValue(thisRef: Any?, property: KProperty<*>): T =
         when (val currentCachedValue = cachedValue) {
             CachedValue.Invalid -> initializer().also { cachedValue = CachedValue.Value(it) }
@@ -68,13 +65,9 @@ fun <T> cached(initializer: () -> T): CachedProperty<T> = CachedProperty(initial
  * @see cached
  */
 fun KProperty0<*>.invalidateCache() {
-    (getDelegate() as? CachedProperty<*>)?.also {
-        if (it.isValid) {
-            isAccessible = true
-            it.invalidate()
-            isAccessible = false
-        }
-    }
+    isAccessible = true
+    (getDelegate() as? CachedProperty<*>)?.also { it.invalidate() }
+    isAccessible = false
 }
 
 /** Calls [invalidateCache] on each property */
