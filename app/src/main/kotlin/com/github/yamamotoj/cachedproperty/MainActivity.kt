@@ -1,18 +1,24 @@
 package com.github.yamamotoj.cachedproperty
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
-    private val cache = CachedProperty(Random()::nextInt)
-    val data by cache
+    private val intValue by cached { Random().nextInt() }
+
+    private val booleanValue by CachedProperty { Random().nextBoolean() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        cache.invalidate()
+
+        // After this call, subsequent access to intValue will trigger the initializer computation
+        ::intValue.invalidateCache()
+
+        // After this call, subsequent access to booleanValue will trigger the initializer computation
+        ::booleanValue.invalidateCache()
     }
 }
